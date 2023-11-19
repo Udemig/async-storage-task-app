@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   taskTitle: {
     flex: 1,
-    fontsize: 15,
+    fontSize: 15,
     color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 5,
