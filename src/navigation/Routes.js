@@ -30,7 +30,11 @@ export default function Routes() {
         component={OnboardingScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen name={ScreenName.taskList} component={TaskListScreen} />
+      <Stack.Screen
+        name={ScreenName.taskList}
+        component={TaskListScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen name={ScreenName.addTask} component={AddTaskScreen} />
     </Stack.Navigator>
   );

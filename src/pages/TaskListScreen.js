@@ -8,128 +8,145 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LottieView from 'lottie-react-native';
+import CustomTextInput from '../components/CustomTextInput';
+import SearchIcon from '../assets/images/SearchIcon.png';
+import colors from '../themes/Colors';
+import CustomButton from '../components/CustomButton';
+import TodoItem from '../components/TodoItem';
+import {useNavigation} from '@react-navigation/native';
+import ScreenName from '../constants/ScreenName';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function TaskListScreen() {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-  const [tasks, setTask] = useState([]);
+  const [tasks, setTask] = useState([
+    {
+      userId: 1,
+      id: 1,
+      title: 'delectus aut autem',
+      status: 'closed',
+    },
+    {
+      userId: 1,
+      id: 2,
+      title: 'delectus aut autem',
+      status: 'done',
+    },
+    {
+      userId: 1,
+      id: 3,
+      title: 'delectus aut autem',
+      status: 'open',
+    },
+    {
+      userId: 1,
+      id: 2,
+      title: 'delectus aut autem',
+      status: 'done',
+    },
+    {
+      userId: 1,
+      id: 3423,
+      title: 'delectus aut autem',
+      status: 'open',
+    },
+    {
+      userId: 1,
+      id: 2342342,
+      title: 'delectus aut autem',
+      status: 'done',
+    },
+    {
+      userId: 1,
+      id: 23432,
+      title: 'delectus aut autem',
+      status: 'open',
+    },
+  ]);
 
-  const saveTodos = async saveTodo => {
-    try {
-      await AsyncStorage.setItem('todos', JSON.stringify(saveTodo));
-    } catch (error) {
-      console.error('Error', error);
-    }
+  const renderHeader = () => {
+    return (
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Tasks</Text>
+      </View>
+    );
   };
 
-  const addTodo = () => {
-    if (todo) {
-      const updatedTodos = [...todos, {id: Date.now(), text: todo}];
-      setTodos(updatedTodos);
-      saveTodos(updatedTodos);
-    }
-  };
-
-  const deleteTodo = async id => {
-    // try {
-    //   await AsyncStorage.removeItem('todos');
-    // } catch (error) {}
-
-    const updatedTodo = todos?.filter(x => x.id !== id);
-    setTodos(updatedTodo);
-    saveTodos(updatedTodo);
-  };
-
-  const loadTodos = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('todos');
-      if (storedData) {
-        setTodos(JSON.parse(storedData));
-      }
-    } catch (error) {}
-  };
-
-  const updateTodos = id => {
-    const existingTodo = todos?.find(x => x.id === id);
-
-    if (!existingTodo) {
-      return;
-    }
-
-    Alert.prompt(
-      'Edit Todo',
-      'Update',
-      newUpdateText => {
-        if (newUpdateText) {
-          const updatedTodos = todos.map(item =>
-            item?.id === id ? {...item, text: newUpdateText} : item,
-          );
-          setTodos(updatedTodos);
-          saveTodos(updatedTodos);
-        }
-      },
-      'plain-text',
-      existingTodo.text,
+  const renderEmptyList = () => {
+    return (
+      <View style={styles.emptyListContainer}>
+        <Icon name="text-box-remove" size={60} color={'gray'} />
+        <Text style={styles.emptyText}>Empty Task</Text>
+      </View>
     );
   };
 
   useEffect(() => {
-    loadTodos();
+    //loadTodos();
   }, []);
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.headerText}>React Native AsyncStorage</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Type a Todo"
+      <View style={styles.mainContentContainer}>
+        <SafeAreaView style={[styles.container, {marginBottom: 20}]}>
+          <CustomTextInput
+            onChangeText={setSearchText}
             value={searchText}
-            onChangeText={text => setSearchText(text)}
+            imageSource={SearchIcon}
+            style={{marginHorizontal: 0}}
+            placeholder="Task Ara"
           />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.addButton]}
-              onPress={addTodo}>
-              <Text style={styles.buttonText}>Add</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <FlatList
-          data={tasks}
-          keyExtractor={item => item.id?.toString()}
-          renderItem={({item}) => (
-            <View style={styles.todoItem}>
-              <Text>{item?.text}</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => deleteTodo(item?.id)}>
-                  <Text style={styles.buttonText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={[styles.button, styles.updateButton]}
-                  onPress={() => updateTodos(item?.id)}>
-                  <Text style={styles.buttonText}>Update</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
+          <FlatList
+            data={tasks}
+            keyExtractor={item => item.id?.toString()}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmptyList}
+            renderItem={({item}) => <TodoItem data={item} />}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 50}}
+          />
+        </SafeAreaView>
+        <CustomButton
+          onPress={() => navigation.navigate(ScreenName.addTask)}
+          label="Add Task"
         />
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 20},
-  headerText: {fontSize: 24, fontWeight: 'bold', marginBottom: 20},
-  inputContainer: {flexDirection: 'row', marginBottom: 20},
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+    // alignItems: 'center',
+  },
+  mainContentContainer: {
+    height: '100%',
+    width: Dimensions.get('screen').width,
+    position: 'absolute',
+    padding: 20,
+  },
+  headerText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+    //textAlign: 'center',
+  },
+  headerContainer: {
+    marginBottom: 10,
+    // backgroundColor: colors.white,
+    // padding: 10,
+    // borderRadius: 10,
+  },
+  emptyText: {fontSize: 15, fontWeight: '500', color: 'gray'},
+  emptyListContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  inputContainer: {flexDirection: 'row', marginBottom: 10},
   input: {
     flex: 1,
     marginRight: 10,
