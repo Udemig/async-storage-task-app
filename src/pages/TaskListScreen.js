@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -17,14 +17,14 @@ import TodoItem from '../components/TodoItem';
 import {useNavigation} from '@react-navigation/native';
 import ScreenName from '../constants/ScreenName';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useTaskContext} from '../context/AppContext';
+import {useTaskContext} from '../context/AppContextReducer';
 import showToast from '../utils/ToastUtils';
 
 export default function TaskListScreen() {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
 
-  const {tasks, deleteAllTask} = useTaskContext();
+  const [state, dispatch] = useTaskContext();
 
   const renderHeader = () => {
     return (
@@ -58,7 +58,7 @@ export default function TaskListScreen() {
                 {
                   text: 'Tamam',
                   onPress: () => {
-                    deleteAllTask();
+                    dispatch({type: 'DELETE_ALL'});
                   },
                 },
                 {
@@ -79,7 +79,7 @@ export default function TaskListScreen() {
             placeholder="Task Ara"
           />
           <FlatList
-            data={tasks}
+            data={state?.tasks}
             keyExtractor={item => item.id?.toString()}
             ListHeaderComponent={renderHeader}
             ListEmptyComponent={renderEmptyList}

@@ -6,15 +6,16 @@ import StatusButton from './StatusButton';
 import {useNavigation} from '@react-navigation/native';
 import ScreenName from '../constants/ScreenName';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useTaskContext} from '../context/AppContext';
+import {useTaskContext} from '../context/AppContextReducer';
 
 export default function TodoItem({data}) {
   const navigation = useNavigation();
-  const {deleteTask} = useTaskContext();
+  const [_, dispatch] = useTaskContext();
 
   const handleDeleteTask = () => {
     console.warn('Delete Task');
-    deleteTask(data?.id);
+    dispatch({type: 'DELETE_TASK', payload: data?.id});
+    //deleteTask(data?.id);
   };
 
   return (

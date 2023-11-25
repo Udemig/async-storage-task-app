@@ -1,6 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import showToast from '../utils/ToastUtils';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorageKey from '../constants/AsyncStorageKey';
 // Context API oluşturuldu!
 
 const TaskContext = React.createContext();
@@ -11,7 +12,11 @@ const TaskProvider = ({children}) => {
   const addTask = newTask => {
     console.warn('addTask', newTask);
     showToast('success', 'New task added!');
-    setTask([...tasks, newTask]);
+    const newTaskData = [...tasks, newTask];
+
+    setTask(newTaskData);
+
+    AsyncStorage.setItem(AsyncStorageKey.tasks, JSON.stringify(newTaskData));
   };
 
   const deleteTask = taskId => {

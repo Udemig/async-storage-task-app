@@ -5,15 +5,22 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorageKey from '../constants/AsyncStorageKey';
 import ScreenName from '../constants/ScreenName';
+import {useTaskContext} from '../context/AppContextReducer';
 import LottieView from 'lottie-react-native';
 
 export default function SplashScreen() {
   const navigation = useNavigation();
 
+  const [_, dispatch] = useTaskContext();
+
   async function checkOnboardingComplete() {
     const onboardingComplete = await AsyncStorage.getItem(
       AsyncStorageKey.onboardingComplete,
     );
+
+    const tasks = await AsyncStorage.getItem(AsyncStorageKey.tasks);
+
+    dispatch({type: 'FETCH_TASK', payload: JSON.parse(tasks)});
 
     if (onboardingComplete === 'true') {
       navigation.replace(ScreenName.taskList);

@@ -8,7 +8,7 @@ import colors from '../themes/Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Status from '../constants/Status';
-import {useTaskContext} from '../context/AppContext';
+import {useTaskContext} from '../context/AppContextReducer';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import ScreenName from '../constants/ScreenName';
 import showToast from '../utils/ToastUtils';
@@ -21,7 +21,7 @@ export default function AddTaskScreen() {
   const [endDate, setEndDate] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState(new Date());
-  const {addTask, updateTask} = useTaskContext();
+  const [state, dispatch] = useTaskContext();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -58,10 +58,12 @@ export default function AddTaskScreen() {
       status: value ? value : Status.open,
     };
     if (task?.id) {
-      updateTask(task?.id, newTask);
+      dispatch({type: 'UPDATE_TASK', taskId: task?.id, payload: newTask});
+      //updateTask(task?.id, newTask);
       showToast('success', 'New task edited!');
     } else {
-      addTask(newTask);
+      dispatch({type: 'ADD_TASK', payload: newTask});
+      //addTask(newTask);
     }
 
     navigation.navigate(ScreenName.taskList);
