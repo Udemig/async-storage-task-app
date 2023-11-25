@@ -1,17 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TextInput,
   FlatList,
   TouchableOpacity,
-  Alert,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LottieView from 'lottie-react-native';
 import CustomTextInput from '../components/CustomTextInput';
 import SearchIcon from '../assets/images/SearchIcon.png';
 import colors from '../themes/Colors';
@@ -20,54 +17,14 @@ import TodoItem from '../components/TodoItem';
 import {useNavigation} from '@react-navigation/native';
 import ScreenName from '../constants/ScreenName';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useTaskContext} from '../context/AppContext';
+import showToast from '../utils/ToastUtils';
 
 export default function TaskListScreen() {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-  const [tasks, setTask] = useState([
-    {
-      userId: 1,
-      id: 1,
-      title: 'delectus aut autem',
-      status: 'closed',
-    },
-    {
-      userId: 1,
-      id: 2,
-      title: 'delectus aut autem',
-      status: 'done',
-    },
-    {
-      userId: 1,
-      id: 3,
-      title: 'delectus aut autem',
-      status: 'open',
-    },
-    {
-      userId: 1,
-      id: 2,
-      title: 'delectus aut autem',
-      status: 'done',
-    },
-    {
-      userId: 1,
-      id: 3423,
-      title: 'delectus aut autem',
-      status: 'open',
-    },
-    {
-      userId: 1,
-      id: 2342342,
-      title: 'delectus aut autem',
-      status: 'done',
-    },
-    {
-      userId: 1,
-      id: 23432,
-      title: 'delectus aut autem',
-      status: 'open',
-    },
-  ]);
+
+  const {tasks, deleteAllTask} = useTaskContext();
 
   const renderHeader = () => {
     return (
@@ -94,6 +51,26 @@ export default function TaskListScreen() {
     <View style={styles.container}>
       <View style={styles.mainContentContainer}>
         <SafeAreaView style={[styles.container, {marginBottom: 20}]}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => {
+              Alert.alert('Delete', 'Confirm Delete ?', [
+                {
+                  text: 'Tamam',
+                  onPress: () => {
+                    deleteAllTask();
+                  },
+                },
+                {
+                  text: 'İptal',
+                  onPress: () => {
+                    showToast('info', 'Cancel deleted task!');
+                  },
+                },
+              ]);
+            }}>
+            <Icon name="delete-outline" size={28} color={colors.primary} />
+          </TouchableOpacity>
           <CustomTextInput
             onChangeText={setSearchText}
             value={searchText}
@@ -175,4 +152,10 @@ const styles = StyleSheet.create({
   addButton: {backgroundColor: 'blue'},
   updateButton: {backgroundColor: 'green'},
   buttonText: {color: '#fff'},
+  deleteButton: {
+    backgroundColor: colors.white,
+    padding: 5,
+    borderRadius: 10,
+    alignSelf: 'flex-end',
+  },
 });

@@ -6,12 +6,15 @@ import StatusButton from './StatusButton';
 import {useNavigation} from '@react-navigation/native';
 import ScreenName from '../constants/ScreenName';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useTaskContext} from '../context/AppContext';
 
 export default function TodoItem({data}) {
   const navigation = useNavigation();
+  const {deleteTask} = useTaskContext();
 
-  const deleteTask = () => {
+  const handleDeleteTask = () => {
     console.warn('Delete Task');
+    deleteTask(data?.id);
   };
 
   return (
@@ -50,11 +53,13 @@ export default function TodoItem({data}) {
           </View>
           <StatusButton
             iconName="pencil"
-            onPress={() => navigation.navigate(ScreenName.addTask)}
+            onPress={() =>
+              navigation.navigate(ScreenName.addTask, {task: data})
+            }
           />
           <StatusButton
             iconName="delete"
-            onPress={() => deleteTask()}
+            onPress={() => handleDeleteTask()}
             color="#e0695e"
           />
         </View>

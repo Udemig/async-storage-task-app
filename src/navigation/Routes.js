@@ -35,7 +35,11 @@ export default function Routes() {
         component={TaskListScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen name={ScreenName.addTask} component={AddTaskScreen} />
+      <Stack.Screen
+        name={ScreenName.addTask}
+        component={AddTaskScreen}
+        options={{title: 'Task Oluştur'}}
+      />
     </Stack.Navigator>
   );
 }
